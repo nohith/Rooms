@@ -1,86 +1,68 @@
-# Rooms — PG & Coliving Finder
+# Rooms — Bengaluru PG & Roommate Finder
 
-A responsive, modern starter app for exploring PG accommodations, private rooms, shared rooms, and studio stays. Built with plain HTML, CSS, and JavaScript: no package manager, build step, API key, or paid service is required.
+## Files and entry points
 
-> **Demo data:** All properties, locations, prices, ratings, review counts, and illustrations are sample content, not verified accommodation offers. The contact action prepares an email draft; there is no live property-owner backend yet.
+- **`index.html`** — original starter version, preserved unchanged.
+- **`rooms-v2.html`** — new feature prototype for the requested marketplace workflow.
+- **`supabase/schema.sql`** — starter database schema for a future Supabase backend.
+- **`styles.css` and `app.js`** — the original starter assets; the v2 prototype is self-contained in `rooms-v2.html`.
 
-## Features
-
-- Responsive desktop, tablet, and mobile layout
-- Search by property name, neighbourhood, city, or room type
-- Monthly budget and room-type filters
-- Quick filters for Wi-Fi, meals, air conditioning, and women-only stays
-- Sort by recommended order, monthly price, or rating
-- Save and unsave favourites using browser local storage when available
-- Details dialog with amenities and a prefilled enquiry email draft
-- Keyboard-friendly controls, accessible labels, reduced-motion support, and empty state
-- No third-party API credentials or JavaScript dependencies
-
-## Run locally
-
-### Option 1 — Open directly
-
-1. Download the repository ZIP or clone the repository.
-2. Open the project folder.
-3. Open `index.html` in a modern browser.
-
-### Option 2 — Use a local server (recommended)
-
-Node.js is **not required**. If Python 3 is installed, open a terminal in the project folder and run:
+Open `rooms-v2.html` in a browser to try the new prototype. To run with a local server, use:
 
 ```bash
 python3 -m http.server 8000
 ```
 
-Then visit http://localhost:8000. If your computer uses the `python` command instead, run `python -m http.server 8000`. Stop the server with Ctrl+C.
+Then visit http://localhost:8000/rooms-v2.html. Node.js and a build step are not required for the front-end demo.
 
-### Option 3 — VS Code
+## What v2 demonstrates
 
-1. Open this folder in Visual Studio Code.
-2. Install the Live Server extension if needed.
-3. Right-click `index.html` and choose **Open with Live Server**.
+- Bengaluru-first search by area, monthly budget, room type and audience
+- Sample listings showing capacity, occupied beds, availability and age bounds
+- Owner submission form for PG, coliving, hotel, hostel or apartment listings
+- Photo selection and local preview data stored in the current browser only
+- Capacity validation (occupied beds cannot exceed capacity) and age-range validation
+- Women-only / men-only listing audience labels and filters
+- Resident lifestyle profile with sleep schedule, cleanliness, noise, food, guests, work/study routine, social style and smoking preference
+- A simple property/profile estimate and sorting placeholder, not a validated psychological assessment or real person-to-person roommate matching
+- Phone sign-in placeholder that explicitly does not send an OTP
+- A small Kannada/English toggle; most form labels and policy content remain English
+- Check-in verification checklist that is only a local reminder, not evidence of verification
+- Original `index.html` remains intact, preserving the initial search/filter/favourites/details experience
 
-## Project structure
+## Critical limitations
 
-```text
-Rooms/
-├── index.html   # Page structure and accessible controls
-├── styles.css   # Responsive visual design
-├── app.js       # Sample data and interactive behaviour
-└── README.md    # Setup and project documentation
-```
+**This repository is not a production marketplace yet.** The new v2 file is a browser-only prototype:
 
-## Try the app
+- Seed listings are illustrative sample data, not verified offers.
+- Owner-submitted listings, selected photos and lifestyle profiles stay in the current browser's local storage; they are not shared with other users/devices.
+- Listing submissions are not sent to an administrator, and the demo does not enforce a real approval queue.
+- Phone login does not send SMS and does not authenticate users.
+- There is no live owner/property identity verification, resident identity verification, check-in approval, messaging, enquiries backend, payment flow or cloud photo storage.
+- No Supabase project has been connected or configured. The SQL file is a starter schema and has not been applied or security-tested against a live database.
+- The SQL schema alone does not implement secure admin review, role assignment, storage permissions or transactional bed reservations. Review and test it before storing personal information.
+- Full Kannada localization has not been completed.
+- The matching estimate cannot identify whether three roommates in a four-person room share the same mindset; the demo does not contain real roommate profiles or real compatibility data.
 
-1. Search for an area such as `Koramangala` or `HSR Layout`.
-2. Choose a monthly budget and room type.
-3. Use amenity chips to narrow results.
-4. Sort by price or rating.
-5. Click the heart on a card to save a stay, then use **Saved** in the header.
-6. Click **View details** to see sample information and prepare an enquiry email.
+Do not upload identity documents, private phone information or other sensitive data to the demo. Do not treat any sample listing or checkbox as verified. Never place Supabase service-role keys in browser code.
 
-Use **Clear all filters** when no results match.
+## Backend implementation plan
 
-## Customise listings
-
-Edit the `stays` array near the top of `app.js`. Each object includes an ID, name, area, type, price in INR per month, rating, review count, gender category, amenity list, tag, colour palette, and description. Keep IDs unique. The quick-filter labels must match the amenity strings.
-
-## Before production use
-
-This is a front-end starter, not a complete booking platform. Before using it with real customers:
-
-- Replace sample data with accurate, permissioned property listings.
-- Add a secure backend/database for listings, availability, enquiries, and moderation.
-- Verify owner identities and property details.
-- Add privacy, safety, terms, and listing-verification policies.
-- Never place private API keys in browser-side JavaScript.
-- Replace the placeholder email `hello@rooms.example` in `index.html` with an actively monitored address.
-- Test with real devices, keyboard navigation, and screen readers.
+1. Create a Supabase project and review/run `supabase/schema.sql` in a staging project.
+2. Enable Supabase Phone Auth and configure an SMS provider; test OTP delivery, rate limits and abuse prevention.
+3. Implement owner/resident onboarding and secure server-side role assignment. Users must never be able to grant themselves admin or verified status.
+4. Configure private storage for identity evidence and a separate listing-photo bucket with restrictive policies.
+5. Add server-side admin approval for owner accounts, property details, resident verification and listing publication.
+6. Enforce room capacity and occupancy transactionally on the server/database to prevent overbooking.
+7. Build consent-based matching that returns only the preferences a user has opted to share; let users edit/delete their profiles.
+8. Add enquiries/messaging and check-in workflow with server-side authorization, audit logs, retention/deletion policies and security testing.
+9. Translate the full UI and safety/privacy terms into reviewed Kannada and English.
+10. Test RLS, authentication, age/audience filters, moderation, photo access, capacity races and deployment before a public launch.
 
 ## Deployment
 
-This is a static website. Upload the files to a static web host or connect this repository to one. Set the repository root as the publish directory. No build command is needed.
+A static host such as Netlify can serve the prototype with the repository root as publish directory and no build command. Hosting the static file does not enable authentication, shared data, verification or other backend features. Configure and test the backend separately before describing the service as live.
 
 ## Licence
 
-No licence has been added. Add one before inviting reuse or contributions.
+No licence has been added yet.
